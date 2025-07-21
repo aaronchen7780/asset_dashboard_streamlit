@@ -252,7 +252,7 @@ def main():
     total_value = portfolio_df['Value'].sum()
 
 
-    st.text("This app represents a comprehensive flavor of what I personally use to track various aspects of my portfolio and how I project growth in the future." \
+    st.text("This app represents a flavor of what I personally use to track various aspects of my portfolio and how I project growth in the future." \
     "\n\nSince Dataiku's Data Scientist job description mentioned building web apps with Python frameworks, I've replicated my actual personal tracker originally built in RShiny in Streamlit with hypothetical assets and parameters to demonstrate how I see the skills being very transferrable." \
     "\n\nThe app automatically calls the yfinance API, fetches the latest asset prices, and calculates various metrics based on user inputs on the left.")
 
