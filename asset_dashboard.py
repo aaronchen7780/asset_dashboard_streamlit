@@ -194,9 +194,9 @@ def main():
     # Initialize session state
     if 'default_quantities' not in st.session_state:
         st.session_state.default_quantities = {
-            'VOO': 5,
-            'VXUS': 20,
-            'VB': 5
+            'NVDA': 15,
+            'GOOGL': 10,
+            'SNOW': 5
         }
     
     # Sidebar inputs
@@ -236,9 +236,9 @@ def main():
     asset_groups = {
         'Cash': int(cash),
         'ISOs': 1000.0,  # Simplified calculation
-        'VOO': int(positions_values.get('VOO', 0)),
-        'VB': int(positions_values.get('VB', 0)),
-        'VXUS': int(positions_values.get('VXUS', 0))
+        'NVDA': int(positions_values.get('NVDA', 0)),
+        'SNOW': int(positions_values.get('SNOW', 0)),
+        'GOOGL': int(positions_values.get('GOOGL', 0))
     }
     
     # Create portfolio dataframe
@@ -253,7 +253,7 @@ def main():
 
 
     st.text("This app represents a flavor of what I personally use to track various aspects of my portfolio and how I project growth in the future." \
-    "\n\nSince Dataiku's Data Scientist job description mentioned building web apps with Python frameworks, I've replicated my actual personal tracker originally built in RShiny in Streamlit with hypothetical assets and parameters to demonstrate how I see the skills being very transferrable." \
+    "\n\nSince Dataiku's Data Scientist job description mentioned building web apps with Python frameworks, I've replicated key aspects of my actual personal tracker — originally built in RShiny — using Streamlit with hypothetical assets and parameters to demonstrate how I see the skills being very transferrable." \
     "\n\nThe app automatically calls the yfinance API, fetches each asset's latest prices, and calculates various metrics based on user inputs on the left.")
 
     # Main content tabs
@@ -315,6 +315,10 @@ def main():
     with tab3:
         st.header("Portfolio Value Projection")
         
+        st.text("Here we project the total value of the portfolio each day up to 180 days in the future." \
+        "" \
+        "\n\nEstimates are made given the per-paycheck contribution amount and the expected compound annual growth rate (% CAGR) of the entire portfolio, both entered on the left.")
+
         # Calculate projections
         dates, values, _ = calculate_portfolio_projections(
             total_value, growth_rate, end_date, standard_invest, fmv, 1250/365
@@ -348,7 +352,7 @@ def main():
             if not exposures_df.empty:
                 st.subheader("Asset Factor Exposures")
                 
-                st.text("Here we run a multiple linear regressions for each asset where we regress their performance against the five fama french and momentum factors. The goal is to understand how each asset in related to the factors that influence returns.")
+                st.text("Here we run a multiple linear regression for each asset where we regress their performance against the five fama french and momentum factors. The goal is to understand how each asset in related to the factors that influence returns.")
                 # Display exposures table
                 display_exposures = exposures_df.copy()
                 numeric_cols = ['alpha', 'mkt', 'size', 'value', 'profit', 'invest', 'mom', 'r2']
@@ -368,7 +372,7 @@ def main():
                 
                 # Portfolio-level exposures
                 st.subheader("Portfolio Factor Exposures")
-                st.text("Here we run a multiple linear regression of the portfolio's performance against the five fama french and momentum factors. The resulting loadings will give guidance for the amount to short if one wishes to hedge against or amplify certain factors.")
+                st.text("Here we run a multiple linear regression of the portfolio's performance against the five fama french and momentum factors. The resulting loadings will give guidance for the amount to short or long if one wishes to hedge against or amplify certain factors.")
                 weights = exposures_df['dollar_exposure'] / exposures_df['dollar_exposure'].sum()
                 portfolio_exposures = {}
                 
