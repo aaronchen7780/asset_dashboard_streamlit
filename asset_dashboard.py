@@ -348,7 +348,7 @@ def main():
             if not exposures_df.empty:
                 st.subheader("Asset Factor Exposures")
                 
-                st.text("Here we run a multiple linear regressions of each asset's performance against the five fama french and momentum factors. The goal is to understand how each asset in related to the factors that influence returns.")
+                st.text("Here we run a multiple linear regressions for each asset where we regress their performance against the five fama french and momentum factors. The goal is to understand how each asset in related to the factors that influence returns.")
                 # Display exposures table
                 display_exposures = exposures_df.copy()
                 numeric_cols = ['alpha', 'mkt', 'size', 'value', 'profit', 'invest', 'mom', 'r2']
@@ -368,7 +368,7 @@ def main():
                 
                 # Portfolio-level exposures
                 st.subheader("Portfolio Factor Exposures")
-                st.text("Here we run a multiple linear regressions of the portfolio's performance against the five fama french and momentum factors. The resulting loadings will give guidance for the amount to short if one wishes to hedge against or amplify certain factors.")
+                st.text("Here we run a multiple linear regression of the portfolio's performance against the five fama french and momentum factors. The resulting loadings will give guidance for the amount to short if one wishes to hedge against or amplify certain factors.")
                 weights = exposures_df['dollar_exposure'] / exposures_df['dollar_exposure'].sum()
                 portfolio_exposures = {}
                 
