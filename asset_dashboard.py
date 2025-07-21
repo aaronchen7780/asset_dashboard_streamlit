@@ -185,7 +185,6 @@ def calculate_portfolio_projections(current_value, growth_rate, end_date, standa
 def main():
     st.title("📈 Portfolio Allocation Dashboard")
     
-    # Initialize session state
     if 'default_quantities' not in st.session_state:
         st.session_state.default_quantities = {
             'NVDA': 15,
