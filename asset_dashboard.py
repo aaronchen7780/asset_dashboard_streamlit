@@ -9,14 +9,12 @@ from sklearn.linear_model import LinearRegression
 import warnings
 warnings.filterwarnings('ignore')
 
-# Set page config
 st.set_page_config(
     page_title="Portfolio Allocation Dashboard",
     page_icon="📈",
     layout="wide"
 )
 
-# Custom CSS for better styling
 st.markdown("""
 <style>
     .metric-card {
@@ -34,7 +32,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-@st.cache_data(ttl=3600)  # Cache for 1 hour
+@st.cache_data(ttl=3600)
 def load_factor_data():
     """Load Fama-French factor data from CSV files"""
     try:
@@ -43,7 +41,6 @@ def load_factor_data():
         factor_data['date'] = pd.to_datetime(factor_data['date'])
         return factor_data
     except FileNotFoundError:
-        # Fallback to mock data if files not found
         st.warning("Factor data files not found. Using mock data for demonstration.")
         dates = pd.date_range(start='2022-01-01', end=datetime.now(), freq='D')
         np.random.seed(42)
@@ -89,7 +86,6 @@ def calculate_portfolio_metrics(stock_data, quantities):
     
     for ticker, data in stock_data.items():
         if ticker in quantities and not data.empty:
-            # Ensure the last price is always a single float, not a Series
             last_price = float(data['Close'].iloc[-1])
             quantity = quantities.get(ticker, 0)
             positions_values[ticker] = last_price * quantity
@@ -122,7 +118,6 @@ def get_asset_exposures(tickers, positions_values, factor_data, decay_rate=0.97)
         if isinstance(weekly_returns, pd.Series):
             returns_df = weekly_returns.to_frame('return')
         else:
-            # If it's already a DataFrame, just rename the column
             returns_df = weekly_returns.copy()
             returns_df.columns = ['return']
         
@@ -172,15 +167,14 @@ def calculate_portfolio_projections(current_value, growth_rate, end_date, standa
     values = []
     
     for dte in intervals:
-        # Calculate contributions (simplified)
-        num_contributions = int(dte / 15.22)  # Bi-weekly contributions
+        # Calculate contributions
+        num_contributions = int(dte / 15.22)
         future_contributions = sum([
             standard_invest * (daily_growth_rate ** max(0, dte - n * 15))
             for n in range(num_contributions)
         ])
         
-        # Calculate vesting value
-        vesting = dte * vest_per_day * (fmv - 3.21) * (daily_growth_rate ** dte)
+        vesting = dte * vest_per_day * (fmv - 3) * (daily_growth_rate ** dte)
         
         # Total estimated value
         estimated_value = (current_value * (daily_growth_rate ** dte) + future_contributions + vesting)//100 * 100
@@ -319,7 +313,6 @@ def main():
         "" \
         "\n\nEstimates are made given the per-paycheck contribution amount and the expected compound annual growth rate (% CAGR) of the entire portfolio, both entered on the left.")
 
-        # Calculate projections
         dates, values, _ = calculate_portfolio_projections(
             total_value, growth_rate, end_date, standard_invest, fmv, 1250/365
         )
@@ -353,7 +346,7 @@ def main():
                 st.subheader("Asset Factor Exposures")
                 
                 st.text("Here we run a multiple linear regression for each asset where we regress their performance against the five fama french and momentum factors. The goal is to understand how each asset in related to the factors that influence returns.")
-                # Display exposures table
+
                 display_exposures = exposures_df.copy()
                 numeric_cols = ['alpha', 'mkt', 'size', 'value', 'profit', 'invest', 'mom', 'r2']
                 for col in numeric_cols:
@@ -405,7 +398,6 @@ def main():
         for fmv_scenario in fmv_range:
             vested_value = 1000 * fmv_scenario 
             unvested_value = 2000 * fmv_scenario 
-            # Removed Expected Appreciation as requested
             
             iso_data.append({
                 'FMV': fmv_scenario,
@@ -420,7 +412,6 @@ def main():
             value_name='Value'
         )
         
-        # Create stacked bar chart
         fig = px.bar(
             iso_df_melted,
             x='FMV',
@@ -442,7 +433,6 @@ def main():
         
         st.plotly_chart(fig, use_container_width=True)
         
-        # ISO summary table
         st.subheader("ISO Scenario Analysis")
         iso_display = iso_df.copy()
         for col in iso_display.columns:
